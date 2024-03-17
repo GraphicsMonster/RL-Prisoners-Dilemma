@@ -79,27 +79,4 @@ class RLAgent:
         """
         state = opp_action * 2 + previous_action
         return state
-    
-    def train(self, num_episodes, num_rounds_per_episode, game_environment):
-        for episode in range(num_episodes):
-            # Reset the environment for each episode
-            game_environment.reset()
-
-            # Loop through each round of the episode
-            for _ in range(num_rounds_per_episode):
-                # Get current state and choose action
-                state = game_environment.get_state()
-                action = self.choose_action(state)
-
-                # Take action and observe next state and reward
-                next_state, reward = game_environment.take_action(action)
-
-                # Update Q-table
-                self.learn(state, action, reward, next_state)
-
-                # Transition to the next state-action pair
-                state = next_state
-
-                # Update exploration rate for next action selection
-                self.update_epsilon(self.min_epsilon, self.decay_rate, episode)
         

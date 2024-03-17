@@ -1,7 +1,6 @@
 # here we define the environment for the game
 import numpy as np
 
-# Define the Prisoner's Dilemma environment
 class PrisonersDilemma:
     def __init__(self):
         self.state = None
@@ -37,7 +36,3 @@ class PrisonersDilemma:
         reward_player, reward_opponent = reward_scheme[(player_action, opponent_action)]
         
         return reward_player, reward_opponent
-
-# Example usage
-env = PrisonersDilemma()
-env.reset()
