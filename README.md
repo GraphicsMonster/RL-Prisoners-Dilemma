@@ -29,3 +29,12 @@ Once you've ensured the required packages are installed in your environment, go 
 Running the environment for a considerable number of episodes, I could clearly see that the agent performed vastly better than the cumulative performance of all the dumb agents. I am still in the process of finding the best way to extract the best strategy(something that can be expressed in a conversation for example) from the Q-table. I will update the code as soon as I land on something that works well. So far the agent has been able to learn the best strategy and has been able to outperform the other agents in most cases.
 ![Results](./results.png)
 
+# Future Work
+- Extract the best strategy from the Q-table
+- Add more agents
+- Add noise in communication between agents
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
+
+
