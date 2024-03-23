@@ -17,11 +17,11 @@ ACTION_ENCODING = {
 }
 
 class RLAgent:
-    def __init__(self, alpha, gamma, epsilon):
+    def __init__(self, alpha, gamma, epsilon, num_opponents):
         self.alpha = alpha  # learning rate
         self.gamma = gamma  # discount factor
         self.epsilon = epsilon  # exploration rate
-        self.q_table = np.random.rand(4, 2)  # 4x2 matrix for 4 states and 2 actions
+        self.q_tables = np.random.rand(num_opponents, *(4, 2))  # individual q tables dedicated to each opponent.
         self.action = np.random.choice([0, 1])  # A random pick between 0 and 1 for the first action
         self.rewards = []  # No rewards at the start
         self.points = 0  # No points at the start
@@ -31,14 +31,14 @@ class RLAgent:
         self.min_epsilon = 0.01  # Minimum value for epsilon
         self.decay_rate = 0.01  # Rate of decay for epsilon
 
-    def choose_action(self, state):
+    def choose_action(self, state, opp_index):
         if np.random.uniform(0, 1) < self.epsilon:
             action = np.random.choice(self.action_space)
         else:
-            action = np.argmax(self.q_table[state])  # state refers to the combined state (opp_action, previous_action)
+            action = np.argmax(self.q_tables[opp_index][state])  # state refers to the combined state (opp_action, previous_action)
         return action
 
-    def update_state(self, previous_action, opp_action):
+    def update_state(self, previous_action, opp_action, opp_index):
         self.previous_action = previous_action
         self.opp_action = opp_action
 
@@ -60,14 +60,14 @@ class RLAgent:
         self.points = sum(self.rewards)  # Update the points collected
 
         # Choose the next action based on the current state
-        self.action = self.choose_action(state)
+        self.action = self.choose_action(state, opp_index)
         return self.action
 
-    def learn(self, state, action, reward, next_state):
-        predict = self.q_table[state][action]
+    def learn(self, state, action, reward, next_state, opp_index):
+        predict = self.q_tables[opp_index][state][action]
         env__state = next_state['player_actions'][-1] * 2 + next_state['opponent_actions'][-1] # handle the state of the environment adjusting for the q-table
-        target = reward + self.gamma * np.max(self.q_table[env__state])
-        self.q_table[state][action] += self.alpha * (target - predict)
+        target = reward + self.gamma * np.max(self.q_tables[opp_index][env__state])
+        self.q_tables[opp_index][state][action] += self.alpha * (target - predict)
 
     def update_epsilon(self, min_epsilon, decay_rate, episode):
         self.epsilon = min_epsilon + (1.0 - min_epsilon) * np.exp(-decay_rate * episode)
