@@ -77,6 +77,6 @@ class RLAgent:
         Returns the encoded state based on the opponent's action and the agent's previous action.
         This adjusts the state space to be 0, 1, 2, 3.
         """
-        state = opp_action * 2 + previous_action
+        state = previous_action * 2 + opp_action # more like a binary encoding 00, 01, 10, 11
         return state
         

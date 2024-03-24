@@ -28,11 +28,11 @@ opponent_indexing = {
 num_opponents = len(opponent_indexing)
 
 # Initialize the RL agent
-rl_agent = RLAgent(alpha=0.1, gamma=0.6, epsilon=0.1, num_opponents=num_opponents)
+rl_agent = RLAgent(alpha=0.1, gamma=0.6, epsilon=0.4, num_opponents=num_opponents)
 
 # Define the hyperparameters
 num_episodes = 100
-num_rounds_per_episode = 25
+num_rounds_per_episode = 120
 
 # TODO: organize the opponent choosing process in a more non_random way -- DONE
 
@@ -79,3 +79,6 @@ for episode in range(num_episodes):
 print("Final scores:")
 print("Agent score", sum(rl_agent_scores))
 print("Cumulative Opponent score", sum(opponent_scores))
+
+difference_percentage = (sum(rl_agent_scores) - sum(opponent_scores)) / sum(opponent_scores) * 100
+print(f"Agent performed {difference_percentage}% better than the opponents")
