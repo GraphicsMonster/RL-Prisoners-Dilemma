@@ -31,8 +31,8 @@ num_opponents = len(opponent_indexing)
 rl_agent = RLAgent(alpha=0.1, gamma=0.6, epsilon=0.4, num_opponents=num_opponents)
 
 # Define the hyperparameters
-num_episodes = 100
-num_rounds_per_episode = 120
+num_episodes = 50
+num_rounds_per_episode = 100
 
 # TODO: organize the opponent choosing process in a more non_random way -- DONE
 
@@ -82,3 +82,28 @@ print("Cumulative Opponent score", sum(opponent_scores))
 
 difference_percentage = (sum(rl_agent_scores) - sum(opponent_scores)) / sum(opponent_scores) * 100
 print(f"Agent performed {difference_percentage}% better than the opponents")
+
+
+# Evaluation code
+print("Evaluation mode...")
+num_rounds = 1000
+rl_agent_score = 0
+opponent_score = {agent.__class__.__name__: 0 for agent in [al_coop, al_bet, deflect, random, t4t]}
+for agent in [al_coop, al_bet, deflect, random, t4t]:
+
+        opp_index = opponent_indexing[agent.__class__.__name__]
+        print("opponent: ", agent.__class__.__name__)
+        rl_agent_score = 0
+
+        for round in range(num_rounds):
+            rl_action = rl_agent.update_state(rl_agent.previous_action, agent.action, opp_index=opp_index)
+            opponent_action = agent.update(agent.previous_action, rl_action)
+
+            next_state, reward_agent, reward_opponent, done = env.step(rl_action, opponent_action)
+
+            rl_agent_score += reward_agent
+            opponent_score[agent.__class__.__name__] += reward_opponent
+
+        print(f"Opponent: {agent.__class__.__name__}")
+        print(f"RL Agent Score: {rl_agent_score}, Opponent Score: {opponent_score[agent.__class__.__name__]}")
+
