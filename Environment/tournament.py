@@ -31,8 +31,8 @@ num_opponents = len(opponent_indexing)
 rl_agent = RLAgent(alpha=0.1, gamma=0.6, epsilon=0.4, num_opponents=num_opponents)
 
 # Define the hyperparameters
-num_episodes = 50
-num_rounds_per_episode = 100
+num_episodes = 100
+num_rounds_per_episode = 120
 
 # TODO: organize the opponent choosing process in a more non_random way -- DONE
 
@@ -74,6 +74,28 @@ for episode in range(num_episodes):
     rl_agent_scores.append(episode_score_agent)
     opponent_scores.append(episode_score_opponent)
     rl_agent.update_epsilon(min_epsilon=0.01, decay_rate=0.001, episode=episode)
+
+print("Training complete.......................")
+
+# Gonna train the agent againt always_betray for an extra 1000 rounds for it to better learn the strategy
+opp_index = opponent_indexing['Always_Betray']
+print("opponent: ", 'Always_Betray')
+
+for round in range(num_rounds_per_episode):
+                                                        
+    # Play the round
+    rl_action = rl_agent.update_state(rl_agent.previous_action, al_bet.action, opp_index=opp_index)
+    opponent_action = al_bet.update(al_bet.previous_action, rl_action)
+    
+    # Update the RL agent's Q-table
+    next_state, reward_agent, reward_opponent, done = env.step(rl_action, opponent_action)
+    state = rl_agent.get_state(rl_agent.opp_action, rl_agent.previous_action) # Get the state based on the previous actions
+    rl_agent.learn(state, rl_action, reward_agent, next_state, opp_index=opp_index)
+    
+print("Training againt always_betray complete.......................")
+print("Updated Q_table against always_betray ---- ")
+for state, row in enumerate(rl_agent.q_tables[opp_index]):
+    print(f"  State {state}: {row}")
 
 # Print final scores
 print("Final scores:")
