@@ -51,8 +51,8 @@ for episode in range(num_episodes):
         for round in range(num_rounds_per_episode):
         
             # Play the round
-            rl_action = rl_agent.update_state(rl_agent.previous_action, opponent_agent.action, opp_index=opp_index)
-            opponent_action = opponent_agent.update(opponent_agent.previous_action, rl_action)
+            rl_action = rl_agent.update_state(opponent_agent.previous_action, opp_index=opp_index)
+            opponent_action = opponent_agent.update(rl_agent.previous_action)
 
             # Update the RL agent's Q-table
             next_state, reward_agent, reward_opponent, done = env.step(rl_action, opponent_action)
@@ -84,8 +84,8 @@ print("opponent: ", 'Always_Betray')
 for round in range(num_rounds_per_episode):
                                                         
     # Play the round
-    rl_action = rl_agent.update_state(rl_agent.previous_action, al_bet.action, opp_index=opp_index)
-    opponent_action = al_bet.update(al_bet.previous_action, rl_action)
+    rl_action = rl_agent.update_state(al_bet.action, opp_index=opp_index)
+    opponent_action = al_bet.update(rl_agent.previous_action)
     
     # Update the RL agent's Q-table
     next_state, reward_agent, reward_opponent, done = env.step(rl_action, opponent_action)
@@ -118,8 +118,8 @@ for agent in [al_coop, al_bet, deflect, random, t4t]:
         rl_agent_score = 0
 
         for round in range(num_rounds):
-            rl_action = rl_agent.update_state(rl_agent.previous_action, agent.action, opp_index=opp_index)
-            opponent_action = agent.update(agent.previous_action, rl_action)
+            rl_action = rl_agent.update_state(agent.action, opp_index=opp_index)
+            opponent_action = agent.update(rl_agent.previous_action)
 
             next_state, reward_agent, reward_opponent, done = env.step(rl_action, opponent_action)
 
