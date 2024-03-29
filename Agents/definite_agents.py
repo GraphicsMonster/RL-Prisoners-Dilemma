@@ -34,12 +34,12 @@ class Always_Coop:
         self.points = sum(self.rewards)
          
 
-    def update(self, action, opp_action):
+    def update(self, opp_action):
         self.opp_action = opp_action # update the opp_action
-        self.previous_action = action
+        self.previous_action = self.action
         self.action = 1  # always cooperate
 
-        if opp_action != action:
+        if opp_action != self.previous_action:
             if opp_action == 0:
                 self.rewards.append(REWARD_SCHEME["cooperate_defect"])  # player cooperates but the other defects
             else:
@@ -61,12 +61,13 @@ class TitforTat:
         self.rewards = rewards
         self.points = sum(self.rewards)
     
-    def update(self, action, opp_action): # update the state of the agent given a move made by the opponent
+    def update(self, opp_action): # update the state of the agent given a move made by the opponent
         self.opp_action = opp_action # update the opp_action
+        self.previous_action = self.action # update the previous action
         self.action = self.opp_action # the agent will always copy the move made by the opponent in the previous round
-        self.previous_action = action # update the previous action
+        
 
-        if opp_action!= action:
+        if opp_action!= self.previous_action:
                     if opp_action == 0:
                         self.rewards.append(REWARD_SCHEME["cooperate_defect"]) # player cooperates but the other defects
                     else:
@@ -89,8 +90,8 @@ class DeflectOnceFor3Betrayals:
         self.betrayals = betrayals
         self.points = points
     
-    def update(self, action, opp_action):
-        self.previous_action = action
+    def update(self, opp_action):
+        self.previous_action = self.action
         self.opp_action = opp_action
         if(opp_action == 0):
             self.betrayals += 1
@@ -125,11 +126,11 @@ class Always_Betray:
             self.rewards = rewards
             self.points = points
 
-        def update(self, action, opp_action):
-            self.previous_action = action
+        def update(self, opp_action):
+            self.previous_action = self.action
             self.opp_action = opp_action
             self.action = 0  # always defect
-            if opp_action!= action:        # standard update of rewards
+            if opp_action!= self.previous_action:        # standard update of rewards
                     if opp_action == 0:
                         self.rewards.append(REWARD_SCHEME["cooperate_defect"])
                     else:
@@ -150,11 +151,11 @@ class Random_Choice:
             self.rewards = rewards
             self.points = points
 
-        def update(self, action, opp_action):  
-            self.previous_action = action
+        def update(self, opp_action):  
+            self.previous_action = self.action
             self.opp_action = opp_action
             self.action = np.random.choice([0,1])   # randomly choose to defect or cooperate
-            if opp_action!= action:       # standard update of rewards
+            if opp_action!= self.previous_action:       # standard update of rewards
                     if opp_action == 0:
                         self.rewards.append(REWARD_SCHEME["cooperate_defect"])
                     else:

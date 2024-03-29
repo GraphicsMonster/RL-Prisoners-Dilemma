@@ -38,15 +38,15 @@ class RLAgent:
             action = np.argmax(self.q_tables[opp_index][state])  # state refers to the combined state (opp_action, previous_action)
         return action
 
-    def update_state(self, previous_action, opp_action, opp_index):
-        self.previous_action = previous_action
+    def update_state(self, opp_action, opp_index):
+        self.previous_action = self.action
         self.opp_action = opp_action
 
         # Determine the current state based on the previous actions
         state = self.get_state(self.opp_action, self.previous_action)
 
         # Update the rewards list
-        if opp_action != previous_action:
+        if opp_action != self.previous_action:
             if opp_action == ACTION_ENCODING["defect"]:
                 self.rewards.append(REWARD_SCHEME["cooperate_defect"])
             else:
